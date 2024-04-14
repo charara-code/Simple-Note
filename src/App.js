@@ -28,14 +28,17 @@ function SearchButton({ searchTerm, setSearchTerm }) {
 }
 
 // NoteButton.js
-function NoteButton({ note, selectedNoteId, setSelectedNoteId }) {
+function NoteButton({ note, selectedNoteId, setSelectedNoteId, toggleDone }) {
   return (
     <button
       className={`Note-button ${
         selectedNoteId === note.id ? "Note-button-selected" : ""
-      }`}
+      } ${note.isDone ? "Note-button-done" : ""}`}
       onClick={() => {
         setSelectedNoteId(note.id);
+      }}
+      onDoubleClick={() => {
+        toggleDone(note.id);
       }}
     >
       {note.title.length > 17 ? `${note.title.slice(0, 17)}...` : note.title}
@@ -180,6 +183,11 @@ function NoteEditor({ selectedNote, handleNoteChange }) {
   );
 }
 
+// UsernameDisplay.js
+function UsernameDisplay({ username }) {
+  return <div className="Username-display">User: {username}</div>;
+}
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [notes, setNotes] = useState(null);
@@ -189,8 +197,14 @@ function App() {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [username, setUsername] = useState("");
 
-
+  const fetchUsername = async () => {
+    const response = await fetch("/profile");
+    const data = await response.json();
+    setUsername(data.name);
+    
+  };
 
   const fetchNotes = async () => {
     const response = await fetch("/notes");
@@ -215,6 +229,7 @@ function App() {
         content: "",
         lastUpdatedAt: new Date(),
         isPinned: false,
+        isDone: false,
       }),
     });
     const newNote = await response.json();
@@ -227,7 +242,7 @@ function App() {
 
   useEffect(() => {
     fetchNotes();
-    
+    fetchUsername();
   }, []);
 
   useEffect(() => {
@@ -327,11 +342,34 @@ function App() {
     setIsSaving(false);
   };
 
+  const toggleDone = async (noteId) => {
+    const noteToToggle = notes.find((note) => note.id === noteId);
+    noteToToggle.isDone = !noteToToggle.isDone;
+    noteToToggle.lastUpdatedAt = new Date();
+    
+    setIsSaving(true);
+    const response = await fetch(`/notes/${noteId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(noteToToggle),
+    });
+  
+    const updatedNote = await response.json();
+    setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
+    sortNotes();
+    setIsSaving(false);
+  }
+
   
   return (
     <>
       <aside className="Side">
         <div className="Create-note-wrapper">
+          <UsernameDisplay 
+            username={username} 
+          />
           <CreateNoteButton 
             createNote={createNote} 
           />
@@ -351,6 +389,7 @@ function App() {
                 note={note} 
                 selectedNoteId={selectedNoteId} 
                 setSelectedNoteId={setSelectedNoteId} 
+                toggleDone={toggleDone}
               />
               <PinButton 
                 note={note} 

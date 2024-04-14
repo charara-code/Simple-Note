@@ -5,49 +5,56 @@
       "title": "My Note 3",
       "content": "This Note shed;lkfmslkmvwlkfmlksfmedrwslkfmlkwemflkwemouldedfwefdwfwsrf be displayeslkgns;klmlkrgflkrgd firelskmglkwrst in the sidrgergfebar (fowegwrgr now)wglrgmlkrfrf;lkrmglkergf",
       "lastUpdatedAt": "2024-04-14T19:21:33.361Z",
-      "isPinned": true
+      "isPinned": true,
+      "isDone": false
     },
     {
       "id": "2688",
       "title": "Note 5",
       "content": "lrg;lrgkerklgflkergrg;merlkglke",
       "lastUpdatedAt": "2024-04-14T22:25:32.118Z",
-      "isPinned": true
+      "isPinned": true,
+      "isDone": false
     },
     {
       "id": "5262",
       "title": "Note 2",
       "content": "regergtrergtrlkgnerlkgl",
-      "lastUpdatedAt": "2024-04-14T22:25:03.439Z",
-      "isPinned": false
+      "lastUpdatedAt": "2024-04-14T22:52:38.109Z",
+      "isPinned": false,
+      "isDone": false
     },
     {
       "id": "553e",
-      "title": "Note 6",
+      "title": " Note number 6",
       "content": "ergergr",
-      "lastUpdatedAt": "2024-04-14T22:25:39.115Z",
-      "isPinned": true
+      "lastUpdatedAt": "2024-04-14T22:58:21.980Z",
+      "isPinned": false,
+      "isDone": false
     },
     {
       "id": "b1a6",
       "title": "Note 7",
       "content": "srgergeg",
-      "lastUpdatedAt": "2024-04-14T22:27:25.830Z",
-      "isPinned": true
+      "lastUpdatedAt": "2024-04-14T22:52:42.797Z",
+      "isPinned": true,
+      "isDone": false
     },
     {
       "id": "b730",
       "title": "Note 4",
       "content": "",
-      "lastUpdatedAt": "2024-04-14T22:24:54.370Z",
-      "isPinned": false
+      "lastUpdatedAt": "2024-04-14T22:54:46.000Z",
+      "isPinned": false,
+      "isDone": false
     },
     {
       "id": "98f2",
       "title": "Note 1",
       "content": "",
-      "lastUpdatedAt": "2024-04-14T22:25:15.306Z",
-      "isPinned": false
+      "lastUpdatedAt": "2024-04-14T22:54:45.357Z",
+      "isPinned": true,
+      "isDone": false
     }
   ],
   "profile": {
