@@ -24,6 +24,7 @@
   display: block;
   width: 100%;
   padding: 12px;
+  padding-left: 50px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -91,7 +92,7 @@
 }
 
 .Note-title-editing {
-  border: 1px solid #ffffff;
+  border: 1px solid none;
 }
 
 .Note-container {
@@ -145,13 +146,27 @@
 
 .Pin-button {
   position: absolute;
-  right: 10px;
   background-color: transparent;
+  top: 50%;
+  left: 10px;
   border: none;
+  transform: translateY(-50%);
 }
 
-.Pin-icon {
+.Pin-button:hover {
+  background-color: rgb(60, 60, 60);
+  border-radius: 20%;
+}
+
+.Pin-icon-unpinned {
+
   color: white;
+  transform: rotate(45deg);
+}
+
+.Pin-icon-pinned {
+  color: rgb(100, 137, 162);
+  transform: rotate(45deg);
 }
 
 

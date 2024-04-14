@@ -27,11 +27,12 @@ function App() {
     const response = await fetch("/notes");
     const data = await response.json();
 
-    setNotes(data);
+    const sortedData = data.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt));
+    setNotes(sortedData);
     setIsLoading(false);
-    if (notes) {
-      sortNotes();
-    }
+
+    
+    
   };
 
   const createNote = async () => {
@@ -48,13 +49,15 @@ function App() {
       }),
     });
     const newNote = await response.json();
-    setNotes([newNote, ...notes]);
+    setNotes(notes => [newNote, ...notes]);
     setSelectedNoteId(newNote.id);
     setSelectedNote(newNote);
+    setNotes(notes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)));
   };
 
   useEffect(() => {
     fetchNotes();
+    
   }, []);
 
   useEffect(() => {
@@ -63,6 +66,8 @@ function App() {
       setSelectedNote(note);
     }
   }, [notes, selectedNoteId]);
+
+  
 
   const handleNoteChange = (event) => {
     setSelectedNote({
@@ -74,25 +79,23 @@ function App() {
 
   const saveNote = async () => {
     setIsSaving(true);
+    const updatedNote = {
+      ...selectedNote,
+      lastUpdatedAt: new Date(),
+    };
+    setSelectedNote(updatedNote);
     const response = await fetch(`/notes/${selectedNoteId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(selectedNote),
-      
+      body: JSON.stringify(updatedNote),
     });
-    const updatedNote = await response.json();
-    setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
+    const savedNote = await response.json();
+    const updatedNotes = notes.map((note) => (note.id === savedNote.id ? savedNote : note));
+    setNotes([...updatedNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))]);
     setIsSaving(false);
-    if (notes) {
-      // modify the lastUpdatedAt property of the note
-      
-      notes.find((note) => note.id === selectedNoteId).lastUpdatedAt = new Date();
-
-      sortNotes();
-    }
-  };
+};
 
   const handleTitleDoubleClick = () => {
     setEditedTitle(selectedNote.title);
@@ -124,27 +127,31 @@ function App() {
   };
 
   const sortNotes = async () => {
-    setNotes(notes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)));    
-  }
+    setNotes(notes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)));
+    // for each note, check if it is pinned
+    // if it is pinned, pass the note id to the pinNote function
+     
+  };
 
-  const pinNote = async (noteId) => {
-    const noteToPin = notes.find((note) => note.id === noteId);
+  const togglePin = async (noteId) => {
+    const noteToToggle = notes.find((note) => note.id === noteId);
+    noteToToggle.isPinned = !noteToToggle.isPinned;
+    
+    setIsSaving(true);
     const response = await fetch(`/notes/${noteId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        isPinned: !noteToPin.isPinned, // Toggle the isPinned property
-      }),
+      body: JSON.stringify(noteToToggle),
     });
-    const pinnedNote = await response.json();
-    setNotes(notes.map((note) => (note.id === pinnedNote.id ? pinnedNote : note)));
-    if (notes) {
-      sortNotes();
-    }
-  };
   
+    const updatedNote = await response.json();
+    setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
+    sortNotes();
+    setIsSaving(false);
+  };
+
   
   return (
     <>
@@ -175,16 +182,20 @@ function App() {
                 setSelectedNoteId(note.id);
               }}
             >
-              {note.title}
+              {note.title.length > 17 ? `${note.title.slice(0, 17)}...` : note.title}
             </button>
             <button
               className="Pin-button"
+              id={note.id}
               onClick={(event) => {
                 event.stopPropagation(); // Prevent the note button's onClick from being called
-                pinNote(note.id);
+                togglePin(note.id);
               }}
-            />
-            <FontAwesomeIcon icon={faThumbTack} className="Pin-icon" />
+            >
+              <FontAwesomeIcon icon={faThumbTack} className={`${note.isPinned ? 'Pin-icon-pinned' : 'Pin-icon-unpinned'}`} />
+
+            </button>
+
             <button
               className="Delete-button"
               onClick={(event) => {
@@ -209,7 +220,9 @@ function App() {
                 autoFocus
               />
             ) : (
-              <h1 className="Note-title" onDoubleClick={handleTitleDoubleClick}>{selectedNote.title}</h1>
+              <h1 className="Note-title" onDoubleClick={handleTitleDoubleClick}>
+                {selectedNote.title.length > 50 ? `${selectedNote.title.slice(0, 50)}...` : selectedNote.title}
+                </h1>
             )}
             <textarea 
             className="Note-editor"

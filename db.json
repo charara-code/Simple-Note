@@ -1,24 +1,66 @@
 {
   "notes": [
     {
+      "isPinned": false,
       "id": "c8c4",
-      "title": "My note 1",
-      "content": "My New Note is awesome!!!\n\n\n\n\nlihykhkjhkhl;k\n'\n;kkjkn,jhjghjykfbhgfhf\nsrgvslkrveldkjv\nlk,fnmvkledmvlkger\nToday is 04/05/2024\nsw,mvnves\n\n\nr\nfberd\ng\nergebe",
-      "lastUpdatedAt": "2024-04-14T16:42:57.781Z",
-      "isPinned": false
+      "title": "My Note 1",
+      "content": "This Note srgmflkerglmrelgklemrlkgmlkergmerklglkermgklshould bregerge displayed first inrmwgm thesdklfmlkergfew;lgkel;rkkgl;ergl;e sidebar (for now)",
+      "lastUpdatedAt": "2024-04-14T19:25:26.427Z"
     },
     {
       "id": "1225",
-      "title": "My 2nd Note",
-      "content": "Super awesome note !!!\n\n\nThis will now be dispdflkjnflayed first (for now)\nsvnsrm,nvev,m\n\n\nrfvbkmklesmvlksde.,vfs.lkdefvklswsfvmsv m,efkelkmklsgrklvwsrewef;lwe;lwl;msmv",
-      "lastUpdatedAt": "2024-04-14T16:42:46.329Z",
+      "title": "My 2nd Notedfbfrbgbreeeeeeeeeeeeeeeeeeregergergegergerbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "content": "Super awesome note !!!\n\n\nThis will now be dispdflkjnflayed first (for now)\nsksglvnsrm,nvev,m\nlrglerg;klwrmjgkerlkermgfwrgergergwlknglkwrelgef;lwe;lwl;msmv",
+      "lastUpdatedAt": "2024-04-14T19:34:06.637Z",
       "isPinned": false
     },
     {
       "id": "cebf",
       "title": "My Note 3",
-      "content": "This Note shed;lkfmslkmvwlkfmlksfmedrwslkfmlkwemflkwemouldedfwefdwfwsrf be displayed first in the sidebar (for now)",
-      "lastUpdatedAt": "2024-04-05T13:56:48.932Z",
+      "content": "This Note shed;lkfmslkmvwlkfmlksfmedrwslkfmlkwemflkwemouldedfwefdwfwsrf be displayeslkgns;klmlkrgflkrgd firelskmglkwrst in the sidrgergfebar (fowegwrgr now)wglrgmlkrfrf;lkrmglkergf",
+      "lastUpdatedAt": "2024-04-14T19:21:33.361Z",
+      "isPinned": true
+    },
+    {
+      "id": "26bd",
+      "title": "note4",
+      "content": "lrr;gmelrgklwrgergkglkklkljlkerglklrsl;kgjler",
+      "lastUpdatedAt": "2024-04-14T19:34:24.215Z",
+      "isPinned": false
+    },
+    {
+      "id": "2688",
+      "title": "note5",
+      "content": "lrg;lrgkerklgflkergrg;merlkglke",
+      "lastUpdatedAt": "2024-04-14T19:24:26.513Z",
+      "isPinned": true
+    },
+    {
+      "id": "63e9",
+      "title": "New note",
+      "content": "",
+      "lastUpdatedAt": "2024-04-14T19:34:28.294Z",
+      "isPinned": false
+    },
+    {
+      "id": "a26a",
+      "title": "New note",
+      "content": "",
+      "lastUpdatedAt": "2024-04-14T19:34:32.325Z",
+      "isPinned": false
+    },
+    {
+      "id": "8334",
+      "title": "New note",
+      "content": "",
+      "lastUpdatedAt": "2024-04-14T19:34:35.591Z",
+      "isPinned": false
+    },
+    {
+      "id": "10da",
+      "title": "New note",
+      "content": "",
+      "lastUpdatedAt": "2024-04-14T19:38:00.182Z",
       "isPinned": false
     }
   ],
