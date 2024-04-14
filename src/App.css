@@ -18,6 +18,26 @@
 
 .Create-note-wrapper {
   padding: 12px;
+  margin-bottom: 12px;
+}
+
+.CreateNote-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid rgb(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font-weight: bold;
+  color: white;
+}
+
+.CreateNote-button:hover {
+  background: rgb(60, 60, 60);
 }
 
 .Note-button {
@@ -28,9 +48,9 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  border: none;
+  border: 1px solid transparent;
   background: none;
-  color: inherit;
+  color: white;
   font-weight: bold;
 }
 
@@ -39,7 +59,8 @@
 }
 
 .Note-button:hover {
-  background: rgb(60, 60, 60);
+  border: 1px solid rgb(0, 149, 255);
+  border-radius: 4px;
 }
 
 .Note-editor {
@@ -109,10 +130,7 @@
   
 }
 
-.Delete-button:hover {
-  background-color: rgb(60, 60, 60,);
-  border-radius: 20%;
-}
+
 
 .Delete-button:hover > .Trashcan-icon {
   color: rgb(255, 255, 255);
@@ -128,9 +146,11 @@
   align-items: center;
   position: relative;
   padding-bottom: 12px;
+  
 }
 
 .Search-icon {
+  color: white;
   position: absolute;
   left: 7px;
   top: 5px;
@@ -148,6 +168,11 @@
   color: white;
   box-sizing: border-box;
   padding-left: 30px;
+  
+}
+
+.Search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .Search-input:focus {
@@ -163,11 +188,7 @@
   transform: translateY(-50%);
 }
 
-.Pin-button:hover {
-  background-color: rgb(60, 60, 60);
-  border-radius: 20%;
-  
-}
+
 
 .Pin-button:hover > .Pin-icon-unpinned {
   color: rgba(255, 255, 255, 1);

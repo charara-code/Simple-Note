@@ -6,10 +6,129 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faThumbTack } from "@fortawesome/free-solid-svg-icons";  
 
-// Cycle de vie du composant App :
-// Initialement : `notes` vaut `null`, donc pas d'affichage dans le header
-// Après le rendu initial : lancement de la requête au serveur (GET /notes)
-// À la réponse du serveur : `notes` devient la réponse du serveur, rafraîchissement de l'affichage
+
+
+function CreateNoteButton({ createNote }) {
+  return <button className="CreateNote-button" onClick={createNote}>+ New note</button>;
+}
+
+function SearchButton({ searchTerm, setSearchTerm }) {
+  return (
+    <div className="Search-wrapper">
+      <FontAwesomeIcon icon={faSearch} className="Search-icon" />
+      <input
+        className="Search-input"
+        placeholder="Search…"
+        value={searchTerm}
+        type="text"
+        onChange={(event) => setSearchTerm(event.target.value)}
+      />
+    </div>
+  );
+}
+
+// NoteButton.js
+function NoteButton({ note, selectedNoteId, setSelectedNoteId }) {
+  return (
+    <button
+      className={`Note-button ${
+        selectedNoteId === note.id ? "Note-button-selected" : ""
+      }`}
+      onClick={() => {
+        setSelectedNoteId(note.id);
+      }}
+    >
+      {note.title.length > 17 ? `${note.title.slice(0, 17)}...` : note.title}
+    </button>
+  );
+}
+
+
+// PinButton.js
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { faThumbTack } from "@fortawesome/free-solid-svg-icons";  
+
+function PinButton({ note, togglePin }) {
+  return (
+    <button
+      className="Pin-button"
+      onClick={(event) => {
+        event.stopPropagation(); // Prevent the note button's onClick from being called
+        togglePin(note.id);
+      }}
+    >
+      <FontAwesomeIcon icon={faThumbTack} className={`${note.isPinned ? 'Pin-icon-pinned' : 'Pin-icon-unpinned'}`} />
+    </button>
+  );
+}
+
+// DeleteButton.js
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
+function DeleteButton({ note, deleteNote }) {
+  return (
+    <button
+      className="Delete-button"
+      onClick={(event) => {
+        event.stopPropagation(); // Prevent the note button's onClick from being called
+        deleteNote(note.id);
+      }}
+    >
+      <FontAwesomeIcon icon={faTrash} className="Trashcan-icon"/>
+    </button>
+  );
+}
+
+// SaveButton.js
+function SaveButton({ isSaving, saveNote }) {
+
+  const [saveStatus, setSaveStatus] = useState("Save");
+
+  useEffect( () => {
+    if (isSaving) {
+      setSaveStatus("Saving...");
+    } else {
+      setSaveStatus("Saved! 🎉");
+      setTimeout(() => 
+        setSaveStatus("Save"), 500
+      );
+    }
+  } , [isSaving])
+
+  return (
+    <button className="Save-button" onClick={saveNote} disabled={isSaving}>
+      {saveStatus}
+    </button>
+  );
+}
+
+// TitleInput.js
+function TitleInput({ isEditingTitle, editedTitle, handleTitleChange, handleTitleBlur, handleTitleDoubleClick, selectedNote }) {
+  return isEditingTitle ? (
+    <input
+      className="Note-title Note-title-editing"
+      value={editedTitle}
+      onChange={handleTitleChange}
+      onBlur={handleTitleBlur}
+      autoFocus
+    />
+  ) : (
+    <h1 className="Note-title" onDoubleClick={handleTitleDoubleClick}>
+      {selectedNote.title.length > 50 ? `${selectedNote.title.slice(0, 50)}...` : selectedNote.title}
+    </h1>
+  );
+}
+
+function NoteEditor({ selectedNote, handleNoteChange }) {
+  return (
+    <textarea 
+      className="Note-editor"
+      value={selectedNote.content} 
+      onChange={handleNoteChange} 
+    />
+  );
+}
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -67,10 +186,6 @@ function App() {
       setSelectedNote(note);
     }
   }, [notes, selectedNoteId]);
-
-
-
-  
 
   const handleNoteChange = (event) => {
     setSelectedNote({
@@ -160,80 +275,56 @@ function App() {
     <>
       <aside className="Side">
         <div className="Create-note-wrapper">
-          <Button onClick={createNote}>+ New note</Button>
+          <CreateNoteButton 
+            createNote={createNote} 
+          />
         </div>
-        <div className="Search-wrapper">
-          <FontAwesomeIcon icon={faSearch} className="Search-icon" />
-        <input
-          className="Search-input"
-          placeholder="Search…"
-          value={searchTerm}
-          type="text"
-          onChange={(event) => setSearchTerm(event.target.value)}
+        <SearchButton 
+          searchTerm={searchTerm} 
+          setSearchTerm={setSearchTerm} 
         />
-        </div>
         {isLoading
           ? "Loading…"
-          : notes?.filter((note) => note.title.toLowerCase().includes(searchTerm.toLowerCase()) || note.content.toLowerCase().includes(searchTerm.toLowerCase()))
+          : notes?.filter(
+            (note) => note.title.toLowerCase().includes(searchTerm.toLowerCase()) || note.content.toLowerCase().includes(searchTerm.toLowerCase())
+          )
           .map((note) => (
             <div className="Note-container" key={note.id}>
-            <button
-              className={`Note-button ${
-                selectedNoteId === note.id ? "Note-button-selected" : ""
-              }`}
-              onClick={() => {
-                setSelectedNoteId(note.id);
-              }}
-            >
-              {note.title.length > 17 ? `${note.title.slice(0, 17)}...` : note.title}
-            </button>
-            <button
-              className="Pin-button"
-              onClick={(event) => {
-                event.stopPropagation(); // Prevent the note button's onClick from being called
-                togglePin(note.id);
-              }}
-            >
-              <FontAwesomeIcon icon={faThumbTack} className={`${note.isPinned ? 'Pin-icon-pinned' : 'Pin-icon-unpinned'}`} />
-
-            </button>
-
-            <button
-              className="Delete-button"
-              onClick={(event) => {
-                event.stopPropagation(); // Prevent the note button's onClick from being called
-                deleteNote(note.id);
-              }}
-            >
-              <FontAwesomeIcon icon={faTrash} className="Trashcan-icon"/>
-            </button>
-          </div>
+              <NoteButton 
+                note={note} 
+                selectedNoteId={selectedNoteId} 
+                setSelectedNoteId={setSelectedNoteId} 
+              />
+              <PinButton 
+                note={note} 
+                togglePin={togglePin} 
+              />
+              <DeleteButton 
+                note={note} 
+                deleteNote={deleteNote} 
+              />
+            </div>
           ))}
       </aside>
       <main className="Main">
         {selectedNote && (
           <>
-            {isEditingTitle ? (
-              <input
-                className="Note-title Note-title-editing"
-                value={editedTitle}
-                onChange={handleTitleChange}
-                onBlur={handleTitleBlur}
-                autoFocus
-              />
-            ) : (
-              <h1 className="Note-title" onDoubleClick={handleTitleDoubleClick}>
-                {selectedNote.title.length > 50 ? `${selectedNote.title.slice(0, 50)}...` : selectedNote.title}
-                </h1>
-            )}
-            <textarea 
-            className="Note-editor"
-            value={selectedNote.content} 
-            onChange={handleNoteChange} 
+            <TitleInput
+              isEditingTitle={isEditingTitle}
+              editedTitle={editedTitle}
+              handleTitleChange={handleTitleChange}
+              handleTitleBlur={handleTitleBlur}
+              handleTitleDoubleClick={handleTitleDoubleClick}
+              selectedNote={selectedNote}
             />
-            <button className="Save-button" onClick={saveNote} disabled={isSvaing}>
-              {isSvaing ? "Saving…" : "Save"}
-            </button>
+            <NoteEditor 
+              selectedNote={selectedNote} 
+              handleNoteChange={handleNoteChange} 
+            />
+            <SaveButton 
+              isSaving={isSvaing} 
+              saveNote={saveNote} 
+            />
             
           </>
       )}
