@@ -49,10 +49,11 @@ function App() {
       }),
     });
     const newNote = await response.json();
-    setNotes(notes => [newNote, ...notes]);
+    const updatedNotes = [...notes, newNote];
+    updatedNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt));
+    setNotes(updatedNotes);
     setSelectedNoteId(newNote.id);
     setSelectedNote(newNote);
-    setNotes(notes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)));
   };
 
   useEffect(() => {
@@ -66,6 +67,8 @@ function App() {
       setSelectedNote(note);
     }
   }, [notes, selectedNoteId]);
+
+
 
   
 
@@ -94,6 +97,8 @@ function App() {
     const savedNote = await response.json();
     const updatedNotes = notes.map((note) => (note.id === savedNote.id ? savedNote : note));
     setNotes([...updatedNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))]);
+    setSelectedNoteId(savedNote.id);
+    setSelectedNote(savedNote);
     setIsSaving(false);
 };
 
@@ -127,10 +132,8 @@ function App() {
   };
 
   const sortNotes = async () => {
-    setNotes(notes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)));
-    // for each note, check if it is pinned
-    // if it is pinned, pass the note id to the pinNote function
-     
+    setNotes(prevNotes => [...prevNotes].sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)));
+    
   };
 
   const togglePin = async (noteId) => {
@@ -186,7 +189,6 @@ function App() {
             </button>
             <button
               className="Pin-button"
-              id={note.id}
               onClick={(event) => {
                 event.stopPropagation(); // Prevent the note button's onClick from being called
                 togglePin(note.id);
@@ -203,7 +205,7 @@ function App() {
                 deleteNote(note.id);
               }}
             >
-              <FontAwesomeIcon icon={faTrash} />
+              <FontAwesomeIcon icon={faTrash} className="Trashcan-icon"/>
             </button>
           </div>
           ))}
