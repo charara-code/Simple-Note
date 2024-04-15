@@ -1,5 +1,6 @@
 # Simple Note
 
+[alt text](preview.png "Preview Of Simple Note")
 
 ## Available Scripts
 
@@ -46,4 +47,8 @@ Filter the notes based on a search query.
 
 By default only the first 10 notes are displayed. You can show more notes by clicking the show more button below
 the notes displayed.
+
+### Change Fonts
+
+You can change fonts for your notes by clicking on the dropdown menu below the text editor. Please note that the font affects ALL notes.
 
