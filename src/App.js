@@ -9,6 +9,20 @@ import  UsernameDisplay from "./components/Misc/UsernameDisplay";
 import  TitleInput  from "./components/NoteComponents/TitleInput";
 import  NoteEditor  from "./components/NoteComponents/NoteEditor";
 import  LoadMoreButton  from "./components/Buttons/LoadMoreButton";
+import  ErrorDialog  from "./components/Misc/ErrorDialog";
+import { 
+  fetchUsernameCall, 
+  fetchNotesCall, 
+  createNoteCall, 
+  updateNoteCall, 
+  deleteNoteCall, 
+  togglePinCall, 
+  toggleDoneCall, 
+  loadMoreNotesCall
+} from './api';
+
+
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,24 +33,31 @@ function App() {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
   const [saveTimeoutId, setSaveTimeoutId] = useState(null);
   const [offset, setOffset] = useState(0);
   const [limit, setLimit] = useState(10);
   const asideRef = useRef();
   const [isLoadingMoreNotes, setIsLoadingMoreNotes] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
  
 
   const fetchUsername = async () => {
-    const response = await fetch("/profile");
-    const data = await response.json();
-    setUsername(data.name);
+    const name = await fetchUsernameCall();
+    if (name.error) {
+      setErrorMessage(name.error);
+      return;
+    }
+    setUsername(name);
     
   };
 
   const fetchNotes = async () => {
-    const response = await fetch(`/notes?_limit=${limit}&_start=${offset}`);
-    const data = await response.json();
+    const data = await fetchNotesCall(limit, offset);
+    if (data.error) {
+      setErrorMessage(data.error);
+      return;
+    }
     const sortedData = data.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt));
     // add the new notes to the existing notes if notes is not null
     setNotes(sortedData);
@@ -50,8 +71,11 @@ function App() {
     setIsLoadingMoreNotes(true);
     setOffset(offset + limit);
     //setIsLoading(true);
-    const response = await fetch(`/notes?_limit=${limit}&_start=${offset}`);
-    const data = await response.json();
+    const data = await loadMoreNotesCall(limit, offset);
+    if (data.error) {
+      setErrorMessage(data.error);
+      return;
+    }
     const newNotes = [...notes, ...data];
     const sortedData = newNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt));
     setNotes(sortedData);
@@ -71,20 +95,17 @@ function App() {
 
   
   const createNote = async () => {
-    const response = await fetch("/notes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: "New note",
-        content: "",
-        lastUpdatedAt: new Date(),
-        isPinned: false,
-        isDone: false,
-      }),
+    const newNote = await createNoteCall( {
+      title: "New Note",
+      content: "",
+      isPinned: false,
+      isDone: false,
+      lastUpdatedAt: new Date(),
     });
-    const newNote = await response.json();
+    if (newNote.error) {
+      setErrorMessage(newNote.error);
+      return;
+    }
     const updatedNotes = [...notes, newNote];
     updatedNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt));
     setNotes(updatedNotes);
@@ -151,14 +172,11 @@ function App() {
       lastUpdatedAt: saveTimeoutId ? new Date() : selectedNote.lastUpdatedAt,
     };
     //setSelectedNote(updatedNote);
-    const response = await fetch(`/notes/${selectedNoteId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedNote),
-    });
-    const savedNote = await response.json();
+    const savedNote = await updateNoteCall(selectedNote.id, updatedNote);
+    if (savedNote.error) {
+      setErrorMessage(savedNote.error);
+      return;
+    }
     const updatedNotes = notes.map((note) => (note.id === savedNote.id ? savedNote : note));
     setNotes([...updatedNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))]);
     //setSelectedNoteId(savedNote.id);
@@ -190,11 +208,14 @@ function App() {
   };
 
   const deleteNote = async (noteId) => {
-    const response = await fetch(`/notes/${noteId}`, {
-      method: "DELETE",
-    });
+    const response = await deleteNoteCall(noteId);
 
-    if (response.ok) {
+    if (response.error) {
+      setErrorMessage(response.error);
+      return;
+    }
+
+    if (response) {
       setNotes(notes.filter(note => note.id !== noteId));
       setSelectedNoteId(null);
       setSelectedNote(null);
@@ -213,15 +234,11 @@ function App() {
     noteToToggle.isPinned = !noteToToggle.isPinned;
     
     //setIsSaving(true);
-    const response = await fetch(`/notes/${noteId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(noteToToggle),
-    });
-  
-    const updatedNote = await response.json();
+    const updatedNote = await togglePinCall(noteId, noteToToggle);
+    if (updatedNote.error) {
+      setErrorMessage(updatedNote.error);
+      return;
+    }
     setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
     sortNotes();
     //setIsSaving(false);
@@ -232,15 +249,11 @@ function App() {
     noteToToggle.isDone = !noteToToggle.isDone;
     
     //setIsSaving(true);
-    const response = await fetch(`/notes/${noteId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(noteToToggle),
-    });
-  
-    const updatedNote = await response.json();
+    const updatedNote = await toggleDoneCall(noteId, noteToToggle);
+    if (updatedNote.error) {
+      setErrorMessage(updatedNote.error);
+      return;
+    }
     setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
     //sortNotes();
     //setIsSaving(false);
@@ -249,6 +262,7 @@ function App() {
   
   return (
     <>
+      <ErrorDialog errorMessage={errorMessage} />
       <aside className="Side" ref={asideRef}>
         <div className="Create-note-wrapper">
           <UsernameDisplay 
