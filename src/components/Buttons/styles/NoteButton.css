@@ -1,0 +1,64 @@
+
+
+
+
+.Note-button-wrapper {
+    /*
+    make space between the children of this element
+    */
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  
+  }
+  
+  .Note-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border: 1px solid transparent;
+    background: none;
+    color: white;
+    font-weight: bold;
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+  
+  .Note-button-selected {
+    background: rgb(44, 51, 56);
+  }
+  
+  .Note-button:hover {
+    border: 1px solid rgb(0, 149, 255);
+    border-radius: 4px;
+  }
+  
+  .Note-button-done {
+    background-color: green
+  }
+  
+  .note-date-display {
+  
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: none;
+    font-size: 10px;
+    margin-top: 10px;
+  }
+  
+  .note-preview {
+    color: white;
+    font-weight: none;
+    font-size: 14px;
+    margin-top: 10px;
+  } 
+  
+  .note-date-display,
+  .note-preview {
+    width: 100%;
+    text-align: left; 
+  
+  }

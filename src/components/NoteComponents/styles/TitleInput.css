@@ -1,0 +1,22 @@
+
+
+
+
+.Note-title {
+    flex-shrink: 0;
+    width: 100%;
+    padding: 12px;
+    padding-left: 25px;
+    border: none;
+    background: none;
+    color: inherit;
+    font-weight: bold;
+    font-size: 2em;
+    font-family: inherit;
+    color: white;
+    box-sizing: border-box;
+  }
+  
+  .Note-title-editing {
+    border: 1px solid none;
+  }

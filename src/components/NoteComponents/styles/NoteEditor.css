@@ -1,0 +1,90 @@
+
+
+
+
+/* For Webkit browsers like Chrome, Safari */
+.Note-editor::-webkit-scrollbar {
+    width: 8px; /* width of the scrollbar */
+  }
+  
+  .Note-editor::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5); /* color of the track */
+  }
+  
+  .Note-editor::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.7); /* color of the scroll thumb */
+    border-radius: 20px; /* roundness of the scroll thumb */
+    border: 3px solid rgba(0, 0, 0, 0); /* creates padding around scroll thumb */
+  }
+
+
+
+
+  .Note-editor-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  
+  }
+  
+  .Note-editor {
+    flex-grow: 1;
+    height: 390%;
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 50px;
+    padding-right: 100px;
+    padding-left: 100px;
+    margin: 0;
+    background: rgb(29, 35, 39);
+    font-size: 1em;
+    font-family: inherit;
+    color: white;
+    box-sizing: border-box;
+  }
+  
+  .Note-editor-footer {
+    position: fixed;
+    bottom: 0;
+    
+    width: 100%;
+    color: white;
+    font-size: 0.85em;
+    padding: 24px;
+    
+  }
+  
+  .Note-editor-select-font {
+    margin-left: 24px;
+    border: none;
+    background: none;
+    color: rgb(161, 160, 160);
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+  
+  }
+  
+  /* the option's bg color should be changed*/
+  .Note-editor-select-font option {
+    background: rgb(29, 35, 39);
+  }
+  
+  
+  /* For Webkit browsers like Chrome, Safari */
+  .Note-editor-select-font::-webkit-scrollbar {
+    width: 8px; /* width of the scrollbar */
+  }
+  
+  .Note-editor-select-font::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5); /* color of the track */
+  }
+  
+  .Note-editor-select-font::-webkit-scrollbar-thumb {
+    background-color: rgba(17, 17, 17, 0.7); /* color of the scroll thumb */
+    border-radius: 20px; /* roundness of the scroll thumb */
+    border: 3px solid rgba(0, 0, 0, 0); /* creates padding around scroll thumb */
+  }
+  

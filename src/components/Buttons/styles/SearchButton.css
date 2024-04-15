@@ -1,0 +1,43 @@
+
+
+
+
+.Search-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-bottom: 12px;
+    
+  }
+  
+  .Search-icon {
+    color: white;
+    position: absolute;
+    left: 7px;
+    top: 5px;
+  }
+  
+  .Search-input {
+  
+    width: 100%;
+    border: none;
+    background: none;
+    color: inherit;
+    font-weight: bold;
+    font-size: 1em;
+    font-family: inherit;
+    color: white;
+    box-sizing: border-box;
+    padding-left: 30px;
+    
+  }
+  
+  .Search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .Search-input:focus {
+    outline: none;
+  }
+  
+  

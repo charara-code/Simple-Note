@@ -1,0 +1,27 @@
+
+
+
+.Load-more-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+.Load-more-button  {
+    border: none;
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.2);
+    
+    margin: 24px;
+    margin-bottom: 50px;
+}
+  
+.Load-more-button:hover {
+    /*
+    hihlight the text when hovered not the whole button
+    */
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    
+    
+}

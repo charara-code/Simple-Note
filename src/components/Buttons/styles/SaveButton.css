@@ -1,0 +1,19 @@
+
+
+.Save-button {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 240px;
+    padding: 12px;
+    border: none;
+    background: rgb(44, 51, 56);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .Save-button:hover {
+    background: rgb(60, 60, 60);
+  }
+  

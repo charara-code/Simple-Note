@@ -1,0 +1,91 @@
+
+
+.Delete-button {
+    position: absolute;
+    background-color: transparent;
+    top: 22%;
+    right: 10px;
+    border: none;
+    transform: translateY(-50%);
+    
+  }
+  
+.Delete-button:hover > .Trashcan-icon {
+    color: rgb(255, 255, 255);
+  
+}
+
+
+
+
+.Trashcan-icon {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+
+
+.delete-note-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* This dims everything behind the dialog */
+    z-index: 1000; /* This ensures the dialog is above everything else */
+    flex-direction: column;
+    align-items: center;
+    color: white;
+  }
+  
+  
+  
+  .delete-note-dialog > div {
+    background-color: rgb(40, 40, 40);
+    padding: 20px;
+    border: 2px solid rgb(77, 77, 77);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .delete-note-dialog > div > div {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    margin: auto;
+  }
+  
+  
+  
+  .Confirm-deletion-button {
+    padding: 12px;
+    border: 2px solid white;
+    background: green;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .Confirm-deletion-button:hover {
+    background: lightgreen
+  }
+  
+  .Cancel-deletion-button {
+    padding: 12px;
+    border: 2px solid white;
+    background: red;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .Cancel-deletion-button:hover {
+    background: lightsalmon;
+  }
+  
+  

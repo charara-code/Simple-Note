@@ -1,0 +1,38 @@
+
+
+
+
+.Pin-button {
+    position: absolute;
+    background-color: transparent;
+    top: 22%;
+    left: 10px;
+    border: none;
+    transform: translateY(-50%);
+  }
+  
+  
+  
+  .Pin-button:hover > .Pin-icon-unpinned {
+    color: rgba(255, 255, 255, 1);
+    transform: rotate(45deg);
+  }
+  
+  .Pin-icon-unpinned {
+  
+    color: rgba(255, 255, 255, 0.2);
+    transform: rotate(45deg);
+  }
+  
+  
+  
+  .Pin-icon-pinned {
+    color: rgb(255, 255, 255);
+    transform: rotate(45deg);
+  }
+  
+  .Pin-button:hover > .Pin-icon-pinned {
+    color: rgba(255, 255, 255, 0.2);
+    transform: rotate(45deg);
+  }
+  
