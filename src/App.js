@@ -28,9 +28,10 @@ function SearchButton({ searchTerm, setSearchTerm }) {
 }
 
 // NoteButton.js
-function NoteButton({ note, selectedNoteId, setSelectedNoteId, toggleDone }) {
+function NoteButton({ note, selectedNoteId, setSelectedNoteId, toggleDone , togglePin, deleteNote}) {
   return (
-    <button
+    <div className="Note-button-wrapper">
+      <button
       className={`Note-button ${
         selectedNoteId === note.id ? "Note-button-selected" : ""
       } ${note.isDone ? "Note-button-done" : ""}`}
@@ -41,8 +42,17 @@ function NoteButton({ note, selectedNoteId, setSelectedNoteId, toggleDone }) {
         toggleDone(note.id);
       }}
     >
-      {note.title.length > 17 ? `${note.title.slice(0, 17)}...` : note.title}
+    <PinButton note={note} togglePin={togglePin} />
+      {note.title.length > 15 ? `${note.title.slice(0, 15)}...` : note.title}
+    <DeleteButton note={note} deleteNote={deleteNote} />
+    <div className="note-date-display">{`${new Date(note.lastUpdatedAt).toLocaleDateString()} ${new Date(note.lastUpdatedAt).toLocaleTimeString()}`}</div>
+    <div className="note-preview">
+      {note.content.length > 20 ? `${note.content.slice(0, 20)}...` : note.content}
+    </div>
     </button>
+    
+    
+    </div>
   );
 }
 
@@ -137,7 +147,7 @@ function SaveButton({ isSaving, saveNote }) {
     if (isSaving) {
       setSaveStatus("Saving...");
     } else {
-      setSaveStatus("Saved! 🎉");
+      setSaveStatus("Saved!");
       setTimeout(() => 
         setSaveStatus("Save"), 500
       );
@@ -198,6 +208,8 @@ function App() {
   const [editedTitle, setEditedTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [username, setUsername] = useState("");
+  const [saveTimeoutId, setSaveTimeoutId] = useState(null);
+  
 
   const fetchUsername = async () => {
     const response = await fetch("/profile");
@@ -252,19 +264,40 @@ function App() {
     }
   }, [notes, selectedNoteId]);
 
+  
+
   const handleNoteChange = (event) => {
     setSelectedNote({
       ...selectedNote,
       content: event.target.value,
     });
+
     
+    
+    if (saveTimeoutId) {
+      clearTimeout(saveTimeoutId);
+    }
+  
+    setSaveTimeoutId(setTimeout(() => {
+      saveNote();
+      
+    }, 3000));
   };
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutId) {
+        clearTimeout(saveTimeoutId);
+      }
+    };
+  }, []);
 
   const saveNote = async () => {
     setIsSaving(true);
     const updatedNote = {
       ...selectedNote,
-      lastUpdatedAt: new Date(),
+      // if savetimeoutid is null then the note is being saved by the user
+      lastUpdatedAt: saveTimeoutId ? new Date() : selectedNote.lastUpdatedAt,
     };
     setSelectedNote(updatedNote);
     const response = await fetch(`/notes/${selectedNoteId}`, {
@@ -345,7 +378,6 @@ function App() {
   const toggleDone = async (noteId) => {
     const noteToToggle = notes.find((note) => note.id === noteId);
     noteToToggle.isDone = !noteToToggle.isDone;
-    noteToToggle.lastUpdatedAt = new Date();
     
     setIsSaving(true);
     const response = await fetch(`/notes/${noteId}`, {
@@ -358,7 +390,7 @@ function App() {
   
     const updatedNote = await response.json();
     setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
-    sortNotes();
+    //sortNotes();
     setIsSaving(false);
   }
 
@@ -390,14 +422,8 @@ function App() {
                 selectedNoteId={selectedNoteId} 
                 setSelectedNoteId={setSelectedNoteId} 
                 toggleDone={toggleDone}
-              />
-              <PinButton 
-                note={note} 
-                togglePin={togglePin} 
-              />
-              <DeleteButton 
-                note={note} 
-                deleteNote={deleteNote} 
+                togglePin={togglePin}
+                deleteNote={deleteNote}
               />
             </div>
           ))}
