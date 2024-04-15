@@ -1,11 +1,9 @@
 import "./App.css";
-import { useEffect, useState } from "react";
-import { Button } from "./components/Button/Button";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faThumbTack } from "@fortawesome/free-solid-svg-icons";  
-
 
 
 function CreateNoteButton({ createNote }) {
@@ -47,7 +45,7 @@ function NoteButton({ note, selectedNoteId, setSelectedNoteId, toggleDone , togg
     <DeleteButton note={note} deleteNote={deleteNote} />
     <div className="note-date-display">{`${new Date(note.lastUpdatedAt).toLocaleDateString()} ${new Date(note.lastUpdatedAt).toLocaleTimeString()}`}</div>
     <div className="note-preview">
-      {note.content.length > 20 ? `${note.content.slice(0, 20)}...` : note.content}
+      { note.content.length > 20 ? `${note.content.slice(0, 20)}...` : note.content}
     </div>
     </button>
     
@@ -183,13 +181,69 @@ function TitleInput({ isEditingTitle, editedTitle, handleTitleChange, handleTitl
 
 }
 
-function NoteEditor({ selectedNote, handleNoteChange }) {
+function NoteEditor({ selectedNote, handleNoteChange}) {
+  const [nbCharacters, setNbCharacters] = useState(0);
+  const [font, setFont] = useState('Arial');
+
+
+
+  
+  const handleNbCharacters = (event) => {
+    setNbCharacters(event.target.value.length);
+  }
+
+  const handleChange = (event) => { 
+    handleNoteChange(event);
+    handleNbCharacters(event);
+  }
+
+  // Update nbCharacters when selectedNote.content changes
+  useEffect(() => {
+    setNbCharacters(selectedNote.content.length);
+    
+    
+  }, [selectedNote.content]);
+  
   return (
-    <textarea 
+    <div className="note-editor-wrapper">
+      <textarea 
       className="Note-editor"
-      value={selectedNote.content} 
-      onChange={handleNoteChange} 
+      value={selectedNote.content}
+      onChange={handleChange}
+      
+      style={{ fontFamily: font }}
+
+      
     />
+    <div className="Note-editor-footer">
+       Characters: {nbCharacters}  |  Font: 
+      <select value={font} onChange={(e) => {setFont(e.target.value)}} className="Note-editor-select-font">
+          
+          <option value="Arial">Arial</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+          <option value="Impact">Impact</option>
+          <option value="Lucida Console">Lucida Console</option>
+          <option value="Tahoma">Tahoma</option>
+          <option value="Trebuchet MS">Trebuchet MS</option>
+          <option value="Palatino Linotype">Palatino Linotype</option>
+          <option value="Garamond">Garamond</option>
+          <option value="Bookman">Bookman</option>
+          <option value="Avant Garde">Avant Garde</option>
+          <option value="Century Gothic">Century Gothic</option>
+          <option value="Copperplate">Copperplate</option>
+          <option value="Brush Script MT">Brush Script MT</option>
+          <option value="Courier">Courier</option>
+          <option value="MS Sans Serif">MS Sans Serif</option>
+          <option value="MS Serif">MS Serif</option>
+          <option value="Symbol">Symbol</option>
+        </select>
+    </div>
+
+    </div>
   );
 }
 
@@ -198,18 +252,51 @@ function UsernameDisplay({ username }) {
   return <div className="Username-display">User: {username}</div>;
 }
 
+// LoadMoreButton.js
+function LoadMoreButton({ loadMoreNotes, isLoadingMoreNotes }) {
+  return (
+    <div className="Load-more-button-container">
+      <button 
+      className="Load-more-button" 
+      onClick={loadMoreNotes}
+      disabled={isLoadingMoreNotes}
+      >
+        Show more
+      </button>
+    </div>
+  );
+}
+
+
+function Spinner() { 
+  return (
+    <div className="Spinner">
+      <div></div>
+      <div></div>
+      <div></div>
+      
+    </div>
+  );
+
+}
+
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [notes, setNotes] = useState(null);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [isSvaing, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [username, setUsername] = useState("");
   const [saveTimeoutId, setSaveTimeoutId] = useState(null);
-  
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const asideRef = useRef();
+  const [isLoadingMoreNotes, setIsLoadingMoreNotes] = useState(false);
+ 
 
   const fetchUsername = async () => {
     const response = await fetch("/profile");
@@ -219,17 +306,41 @@ function App() {
   };
 
   const fetchNotes = async () => {
-    const response = await fetch("/notes");
+    const response = await fetch(`/notes?_limit=${limit}&_start=${offset}`);
     const data = await response.json();
-
     const sortedData = data.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt));
+    // add the new notes to the existing notes if notes is not null
     setNotes(sortedData);
+    setOffset(offset + limit);
+    
     setIsLoading(false);
+  };
+
+  const loadMoreNotes = async () => {
+    // Store the current scroll position
+    setIsLoadingMoreNotes(true);
+    setOffset(offset + limit);
+    //setIsLoading(true);
+    const response = await fetch(`/notes?_limit=${limit}&_start=${offset}`);
+    const data = await response.json();
+    const newNotes = [...notes, ...data];
+    const sortedData = newNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt));
+    setNotes(sortedData);
+    
+    
+    setIsLoadingMoreNotes(false);
 
     
     
   };
 
+  useEffect(() => {
+    if (!isLoadingMoreNotes) {
+      asideRef.current.scrollTop = asideRef.current.scrollHeight;
+    }
+  }, [ isLoadingMoreNotes] );
+
+  
   const createNote = async () => {
     const response = await fetch("/notes", {
       method: "POST",
@@ -257,6 +368,8 @@ function App() {
     fetchUsername();
   }, []);
 
+  
+
   useEffect(() => {
     if (notes && selectedNoteId) {
       const note = notes.find((note) => note.id === selectedNoteId);
@@ -267,11 +380,19 @@ function App() {
   
 
   const handleNoteChange = (event) => {
-    setSelectedNote({
-      ...selectedNote,
-      content: event.target.value,
-    });
+    
+    if (event.target.value === selectedNote.content) { 
+      return;
+    } else {
+      const newNote = selectedNote;
+      newNote.content = event.target.value;
+      setSelectedNote(newNote);
+    }
 
+
+    const noteButton = document.querySelector(".Note-button-selected");
+
+    noteButton.style.color = `rgba(255, 255, 255, 0.5)`;
     
     
     if (saveTimeoutId) {
@@ -280,10 +401,11 @@ function App() {
   
     setSaveTimeoutId(setTimeout(() => {
       saveNote();
-      
-    }, 3000));
+      noteButton.style.color = "white";
+    }, 500));
   };
 
+  
   useEffect(() => {
     return () => {
       if (saveTimeoutId) {
@@ -299,7 +421,7 @@ function App() {
       // if savetimeoutid is null then the note is being saved by the user
       lastUpdatedAt: saveTimeoutId ? new Date() : selectedNote.lastUpdatedAt,
     };
-    setSelectedNote(updatedNote);
+    //setSelectedNote(updatedNote);
     const response = await fetch(`/notes/${selectedNoteId}`, {
       method: "PUT",
       headers: {
@@ -310,8 +432,8 @@ function App() {
     const savedNote = await response.json();
     const updatedNotes = notes.map((note) => (note.id === savedNote.id ? savedNote : note));
     setNotes([...updatedNotes.sort((a, b) => b.isPinned - a.isPinned || new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))]);
-    setSelectedNoteId(savedNote.id);
-    setSelectedNote(savedNote);
+    //setSelectedNoteId(savedNote.id);
+    //setSelectedNote(savedNote);
     setIsSaving(false);
 };
 
@@ -339,15 +461,16 @@ function App() {
   };
 
   const deleteNote = async (noteId) => {
-    if (selectedNote) {
-      const response = await fetch(`/notes/${noteId}`, {
-        method: "DELETE",
-      });
-  
-      if (response.ok) {
-        setNotes(notes.filter(note => note.id !== noteId));
-        setSelectedNoteId(null);
-      }
+    const response = await fetch(`/notes/${noteId}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setNotes(notes.filter(note => note.id !== noteId));
+      setSelectedNoteId(null);
+      setSelectedNote(null);
+
+
     }
   };
 
@@ -360,7 +483,7 @@ function App() {
     const noteToToggle = notes.find((note) => note.id === noteId);
     noteToToggle.isPinned = !noteToToggle.isPinned;
     
-    setIsSaving(true);
+    //setIsSaving(true);
     const response = await fetch(`/notes/${noteId}`, {
       method: "PUT",
       headers: {
@@ -372,14 +495,14 @@ function App() {
     const updatedNote = await response.json();
     setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
     sortNotes();
-    setIsSaving(false);
+    //setIsSaving(false);
   };
 
   const toggleDone = async (noteId) => {
     const noteToToggle = notes.find((note) => note.id === noteId);
     noteToToggle.isDone = !noteToToggle.isDone;
     
-    setIsSaving(true);
+    //setIsSaving(true);
     const response = await fetch(`/notes/${noteId}`, {
       method: "PUT",
       headers: {
@@ -391,13 +514,13 @@ function App() {
     const updatedNote = await response.json();
     setNotes(notes.map((note) => (note.id === updatedNote.id ? updatedNote : note)));
     //sortNotes();
-    setIsSaving(false);
+    //setIsSaving(false);
   }
 
   
   return (
     <>
-      <aside className="Side">
+      <aside className="Side" ref={asideRef}>
         <div className="Create-note-wrapper">
           <UsernameDisplay 
             username={username} 
@@ -411,7 +534,7 @@ function App() {
           setSearchTerm={setSearchTerm} 
         />
         {isLoading
-          ? "Loading…"
+          ? <Spinner/>
           : notes?.filter(
             (note) => note.title.toLowerCase().includes(searchTerm.toLowerCase()) || note.content.toLowerCase().includes(searchTerm.toLowerCase())
           )
@@ -427,6 +550,11 @@ function App() {
               />
             </div>
           ))}
+          {isLoadingMoreNotes ? <Spinner/> : null}
+        <LoadMoreButton
+          loadMoreNotes={loadMoreNotes}
+          isLoadingMoreNotes={isLoadingMoreNotes}
+        />
       </aside>
       <main className="Main">
         {selectedNote && (
@@ -444,8 +572,11 @@ function App() {
               selectedNote={selectedNote} 
               handleNoteChange={handleNoteChange} 
             />
+
+            
+            
             <SaveButton 
-              isSaving={isSvaing} 
+              isSaving={isSaving} 
               saveNote={saveNote} 
             />
             
