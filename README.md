@@ -1,6 +1,6 @@
 # Simple Note
 
-[alt text](preview.png "Preview Of Simple Note")
+![Preview](preview.png "Preview Of Simple Note")
 
 ## Available Scripts
 
